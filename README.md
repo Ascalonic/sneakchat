@@ -6,6 +6,8 @@ A modern, privacy-focused end-to-end encrypted messaging platform that prioritiz
 
 ## 🔄 Why SneakChat?
 
+![SneakChat Banner](docs/screenshot.jpg)
+
 ### Comparison with Alternatives
 
 | Feature | SneakChat | WhatsApp | Signal | Telegram | Teams |
