@@ -28,6 +28,7 @@ import {
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
   PersonAdd as PersonAddIcon,
+  ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
@@ -67,18 +68,153 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '100vh',
   display: 'flex',
   flexDirection: 'column',
-  borderRight: `1px solid ${theme.palette.divider}`,
+  backgroundColor: 'var(--secondary-bg)',
+  borderRadius: 0,
+  border: 'none',
+  boxShadow: 'none',
+  overflow: 'hidden',
+  '& .MuiListItem-root': {
+    borderRadius: 'var(--border-radius-md)',
+    margin: '4px 8px',
+    transition: 'all var(--transition-fast)',
+  }
 }));
 
-const StyledListItem = styled(ListItem)(({ theme }) => ({
-  cursor: 'pointer',
+const ChatContainer = styled(Box)({
+  display: 'flex',
+  height: '100vh',
+  backgroundColor: 'var(--primary-bg)',
+});
+
+const ContactList = styled(Box)({
+  width: '360px',
+  borderRight: '1px solid var(--border-color)',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: 'var(--secondary-bg)',
+});
+
+const ChatHeader = styled(Box)({
+  padding: '20px',
+  borderBottom: '1px solid var(--border-color)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  backgroundColor: 'var(--secondary-bg)',
+  '& h6': {
+    color: 'var(--text-primary)',
+    fontSize: '24px',
+    fontWeight: 600,
+  }
+});
+
+const ChatMessages = styled(Box)({
+  flex: 1,
+  overflowY: 'auto',
+  padding: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: 'transparent',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: 'var(--text-secondary)',
+    borderRadius: 'var(--border-radius-sm)',
+  }
+});
+
+const MessageBubble = styled(Box)<{ sent?: boolean }>(({ sent }) => ({
+  maxWidth: '70%',
+  padding: '12px 16px',
+  borderRadius: sent ? 'var(--border-radius-md) var(--border-radius-md) 0 var(--border-radius-md)' 
+                    : 'var(--border-radius-md) var(--border-radius-md) var(--border-radius-md) 0',
+  backgroundColor: sent ? 'var(--message-sent-bg)' : 'var(--message-received-bg)',
+  color: sent ? '#fff' : 'var(--text-primary)',
+  alignSelf: sent ? 'flex-end' : 'flex-start',
+  position: 'relative',
+  animation: 'scaleIn var(--transition-normal)',
   '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '&.Mui-selected': {
-    backgroundColor: theme.palette.action.selected,
-  },
+    transform: 'scale(1.01)',
+    transition: 'transform var(--transition-fast)',
+  }
 }));
+
+const MessageTime = styled(Typography)({
+  fontSize: '0.75rem',
+  color: 'var(--text-secondary)',
+  marginTop: '4px',
+  opacity: 0.8,
+});
+
+const ContactItem = styled(ListItem)<{ selected?: boolean }>(({ selected }) => ({
+  backgroundColor: selected ? 'var(--active-bg)' : 'transparent',
+  '&:hover': {
+    backgroundColor: 'var(--hover-bg)',
+  },
+  padding: '12px 16px',
+  cursor: 'pointer',
+  transition: 'all var(--transition-fast)',
+}));
+
+const ContactAvatar = styled(Avatar)({
+  backgroundColor: 'var(--accent-color)',
+  width: 40,
+  height: 40,
+});
+
+const ContactInfo = styled(Box)({
+  marginLeft: '12px',
+  flex: 1,
+  '& .MuiTypography-root': {
+    color: 'var(--text-primary)',
+  },
+  '& .MuiTypography-body2': {
+    color: 'var(--text-secondary)',
+  }
+});
+
+const MessageInput = styled(Box)({
+  padding: '20px',
+  borderTop: '1px solid var(--border-color)',
+  backgroundColor: 'var(--secondary-bg)',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  '& .MuiTextField-root': {
+    flex: 1,
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: 'var(--primary-bg)',
+      borderRadius: 'var(--border-radius-md)',
+      '& fieldset': {
+        borderColor: 'transparent',
+      },
+      '&:hover fieldset': {
+        borderColor: 'var(--border-color)',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'var(--accent-color)',
+      },
+      '& input': {
+        color: 'var(--text-primary)',
+      }
+    }
+  }
+});
+
+const SendButton = styled(IconButton)({
+  backgroundColor: 'var(--accent-color)',
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: 'var(--accent-color)',
+    opacity: 0.9,
+  },
+  width: '40px',
+  height: '40px',
+});
 
 const Chat: React.FC = () => {
   const { user } = useAuth();
@@ -478,7 +614,12 @@ const Chat: React.FC = () => {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }
   };
 
   const handleAddContact = async () => {
@@ -534,154 +675,113 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex' }}>
-      <Box sx={{ display: 'flex', width: '100%' }}>
-        {/* Contacts List */}
-        <Box sx={{ width: '25%' }}>
-          <StyledPaper>
-            <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar />
-                  <Typography variant="h6" sx={{ ml: 2 }}>
-                    Chats
+    <ChatContainer>
+      <ContactList>
+        <ChatHeader>
+          <Typography variant="h6">Chats</Typography>
+          <IconButton onClick={() => setOpenAddContact(true)} sx={{ color: 'var(--accent-color)' }}>
+            <PersonAddIcon />
+          </IconButton>
+        </ChatHeader>
+        <List sx={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+          {contacts.map((contact) => (
+            <ContactItem
+              key={contact._id}
+              selected={selectedContact?._id === contact._id}
+              onClick={() => handleContactSelect(contact)}
+              className="slide-in"
+            >
+              <ContactAvatar>{contact.username[0].toUpperCase()}</ContactAvatar>
+              <ContactInfo>
+                <Typography variant="body1">{contact.username}</Typography>
+                <Typography variant="body2">{contact.status}</Typography>
+              </ContactInfo>
+            </ContactItem>
+          ))}
+        </List>
+      </ContactList>
+
+      <StyledPaper elevation={0} sx={{ flex: 1 }}>
+        {selectedContact ? (
+          <>
+            <ChatHeader>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton 
+                  sx={{ mr: 1, color: 'var(--accent-color)' }}
+                  onClick={() => setSelectedContact(null)}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <ContactAvatar sx={{ mr: 1 }}>{selectedContact.username[0].toUpperCase()}</ContactAvatar>
+                <Box>
+                  <Typography variant="h6">{selectedContact.username}</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
+                    End-to-end encrypted
                   </Typography>
                 </Box>
-                <IconButton onClick={() => setOpenAddContact(true)}>
-                  <PersonAddIcon />
-                </IconButton>
               </Box>
+            </ChatHeader>
+
+            <ChatMessages>
+              {messages.map((message) => (
+                <Box 
+                  key={message._id} 
+                  sx={{ 
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: message.sender === user?.id ? 'flex-end' : 'flex-start'
+                  }}
+                >
+                  <MessageBubble sent={message.sender === user?.id}>
+                    {message.content}
+                    <MessageTime>
+                      {new Date(message.createdAt).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}
+                    </MessageTime>
+                  </MessageBubble>
+                </Box>
+              ))}
+              <div ref={messagesEndRef} style={{ height: 1 }} />
+            </ChatMessages>
+
+            <MessageInput>
               <TextField
                 fullWidth
-                placeholder="Search contacts"
-                InputProps={{
-                  startAdornment: <SearchIcon />,
+                placeholder="Type a message"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSendMessage();
+                  }
                 }}
+                variant="outlined"
               />
-            </Box>
-            <Divider />
-            <List sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 140px)' }}>
-              {contacts.map((contact) => (
-                <StyledListItem
-                  key={contact._id}
-                  onClick={() => handleContactSelect(contact)}
-                  className={selectedContact?._id === contact._id ? 'Mui-selected' : ''}
-                >
-                  <ListItemAvatar>
-                    <Badge
-                      color={contact.status === 'online' ? 'success' : 'error'}
-                      variant="dot"
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                      }}
-                    >
-                      <Avatar src={contact.profilePicture} />
-                    </Badge>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={contact.username}
-                    secondary={contact.status}
-                  />
-                </StyledListItem>
-              ))}
-            </List>
-          </StyledPaper>
-        </Box>
-
-        {/* Chat Area */}
-        <Box sx={{ width: '75%' }}>
-          <StyledPaper>
-            {selectedContact ? (
-              <>
-                {/* Chat Header */}
-                <Box sx={{ p: 2, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
-                  <Avatar src={selectedContact.profilePicture} />
-                  <Box sx={{ ml: 2, flex: 1 }}>
-                    <Typography variant="h6">{selectedContact.username}</Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {selectedContact.status}
-                    </Typography>
-                  </Box>
-                  <IconButton>
-                    <SearchIcon />
-                  </IconButton>
-                  <IconButton>
-                    <MoreVertIcon />
-                  </IconButton>
-                </Box>
-                <Divider />
-
-                {/* Messages */}
-                <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: '#0a1014' }}>
-                  {messages.map((message) => (
-                    <Box
-                      key={message._id}
-                      sx={{
-                        display: 'flex',
-                        justifyContent: message.sender === user?.id ? 'flex-end' : 'flex-start',
-                        mb: 2,
-                      }}
-                    >
-                      <Paper
-                        sx={{
-                          p: 2,
-                          bgcolor: message.sender === user?.id ? '#005c4b' : '#202c33',
-                          maxWidth: '70%',
-                        }}
-                      >
-                        <Typography>{message.content}</Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          {new Date(message.createdAt).toLocaleTimeString()}
-                        </Typography>
-                      </Paper>
-                    </Box>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </Box>
-
-                {/* Message Input */}
-                <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton>
-                      <AttachFileIcon />
-                    </IconButton>
-                    <Box sx={{ flex: 1 }}>
-                      <TextField
-                        fullWidth
-                        placeholder="Type a message"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSendMessage();
-                          }
-                        }}
-                      />
-                    </Box>
-                    <IconButton onClick={handleSendMessage} color="primary">
-                      <SendIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
-              </>
-            ) : (
-              <Box
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography variant="h6" color="textSecondary">
-                  Select a contact to start chatting
-                </Typography>
-              </Box>
-            )}
-          </StyledPaper>
-        </Box>
-      </Box>
+              <SendButton onClick={handleSendMessage} className="scale-in">
+                <SendIcon />
+              </SendButton>
+            </MessageInput>
+          </>
+        ) : (
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              gap: 2,
+              color: 'var(--text-secondary)'
+            }}
+          >
+            <Typography variant="h6">
+              Select a contact to start chatting
+            </Typography>
+          </Box>
+        )}
+      </StyledPaper>
 
       {/* Add Contact Dialog */}
       <Dialog open={!!addContactEmail} onClose={() => setAddContactEmail('')}>
@@ -725,7 +825,7 @@ const Chat: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </ChatContainer>
   );
 };
 
