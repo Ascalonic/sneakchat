@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -39,7 +40,20 @@ io.use((socket, next) => {
 });
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "img-src": ["'self'", "data:", "https:"],
+      "script-src": ["'self'", "'unsafe-inline'"],
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"],
+    },
+  },
+}));
+
+// Serve static files from docs directory
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // CORS configuration
 app.use(cors({
@@ -140,9 +154,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Basic route
+// Update the root route to serve the landing page
 app.get('/', (req, res) => {
-  res.json({ message: 'Secure Messenger API' });
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;

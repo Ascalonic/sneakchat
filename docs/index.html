@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SneakChat - Privacy-First Encrypted Messaging</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0D1117;
+            --secondary-bg: #161B22;
+            --accent-color: #0D99FF;
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--secondary-bg);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo span {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .github-button {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .github-button:hover {
+            opacity: 0.9;
+        }
+
+        .hero {
+            padding: 160px 0 80px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent-color), #6C47FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .features {
+            padding: 80px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background-color: var(--secondary-bg);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        .comparison {
+            padding: 80px 0;
+            background-color: var(--secondary-bg);
+        }
+
+        .comparison h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--primary-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
+        }
+
+        .check {
+            color: #2DD4BF;
+        }
+
+        .warning {
+            color: #FFB020;
+        }
+
+        .cross {
+            color: #FF4D4D;
+        }
+
+        footer {
+            background-color: var(--secondary-bg);
+            padding: 40px 0;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content p {
+            color: var(--text-secondary);
+        }
+
+        .footer-content a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <img src="logo.png" alt="SneakChat Logo">
+                <span>SneakChat</span>
+            </a>
+            <a href="https://github.com/Ascalonic/sneakchat" class="github-button" target="_blank">View on GitHub</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Privacy-First Encrypted Messaging</h1>
+            <p>A modern, open-source platform that prioritizes security and data sovereignty with true end-to-end encryption and no metadata collection.</p>
+            <a href="https://github.com/Ascalonic/sneakchat" class="github-button" target="_blank">Get Started</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>End-to-End Encryption</h3>
+                    <p>True end-to-end encryption using RSA-2048 and AES-256-GCM with unique encryption for both sender and recipient.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Complete Privacy</h3>
+                    <p>No third-party servers, no metadata collection, and no backdoors. Your data stays completely private.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Self-Hostable</h3>
+                    <p>Deploy on your own infrastructure with complete control over your data and communications.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Enterprise Ready</h3>
+                    <p>Built for organizations with features like user management, contact verification, and offline message support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison">
+        <div class="container">
+            <h2>Why Choose SneakChat?</h2>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>SneakChat</th>
+                    <th>Others</th>
+                </tr>
+                <tr>
+                    <td>End-to-End Encryption</td>
+                    <td><span class="check">✓ Always</span></td>
+                    <td><span class="warning">⚠ Optional/Limited</span></td>
+                </tr>
+                <tr>
+                    <td>Self-Hostable</td>
+                    <td><span class="check">✓ Yes</span></td>
+                    <td><span class="cross">✗ No</span></td>
+                </tr>
+                <tr>
+                    <td>Data Sovereignty</td>
+                    <td><span class="check">✓ Complete</span></td>
+                    <td><span class="cross">✗ None</span></td>
+                </tr>
+                <tr>
+                    <td>Metadata Collection</td>
+                    <td><span class="check">✓ None</span></td>
+                    <td><span class="warning">⚠ Extensive</span></td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <p>Created by <a href="https://github.com/Ascalonic" target="_blank">Varghese Mathai</a></p>
+            <p>Licensed under <a href="https://github.com/Ascalonic/sneakchat/blob/master/LICENSE" target="_blank">MIT License</a></p>
+        </div>
+    </footer>
+</body>
+</html> 
